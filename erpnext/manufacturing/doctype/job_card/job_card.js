@@ -165,9 +165,14 @@ frappe.ui.form.on('Job Card', {
 		if (!frm.doc.started_time && !frm.doc.current_time) {
 			frm.add_custom_button(__("Start Job"), () => {
 				if ((frm.doc.employee && !frm.doc.employee.length) || !frm.doc.employee) {
-					frappe.prompt({fieldtype: 'Table MultiSelect', label: __('Select Employees'),
-						options: "Job Card Time Log", fieldname: 'employees'}, d => {
-						frm.events.start_job(frm, "Work In Progress", d.employees);
+					frappe.prompt({
+						fieldtype: 'Table MultiSelect',
+						label: __('Select Employees'),
+						options: "Job Card Time Log",
+						fieldname: 'employees'
+					}, d => {
+						console.log('dialog result', d)
+						// frm.events.start_job(frm, "Work In Progress", d.employees);
 					}, __("Assign Job to Employee"));
 				} else {
 					frm.events.start_job(frm, "Work In Progress", frm.doc.employee);
