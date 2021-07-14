@@ -166,13 +166,22 @@ frappe.ui.form.on('Job Card', {
 			frm.add_custom_button(__("Start Job"), () => {
 				if ((frm.doc.employee && !frm.doc.employee.length) || !frm.doc.employee) {
 					frappe.prompt({
-						fieldtype: 'Table MultiSelect',
+						fieldtype: 'Data',
 						label: __('Select Employees'),
-						options: "Job Card Time Log",
-						fieldname: 'employees'
-					}, d => {
-						console.log('dialog result', d)
-						// frm.events.start_job(frm, "Work In Progress", d.employees);
+						fieldname: 'employee'
+					}, ({ employee }) => {
+						frappe.call('frappe.desk.form.utils.validate_link', { options: 'Employee', value: employee })
+							.then(({ message }) => {
+								if (message === 'Ok') {
+									frm.events.start_job(frm, "Work In Progress", [{ employee }]);
+								} else {
+									frappe.msgprint({
+										title: __('Error'),
+										indicator: 'red',
+										message: __('El ID introducido es invalido')
+									});
+								}
+						})
 					}, __("Assign Job to Employee"));
 				} else {
 					frm.events.start_job(frm, "Work In Progress", frm.doc.employee);
